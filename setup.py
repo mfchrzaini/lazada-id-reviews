@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 __version__ = "0.0.1"
 
-REPO_NAME = "ML-PROJECT-TEMPLATE"
+REPO_NAME = "lazada-id-reviews"
 AUTHOR_USER_NAME = "mfchrzaini"
-SRC_REPO = "MLProject"
+SRC_REPO = "LazadaIDReviews"
 AUTHOR_EMAIL = "fachruzaini@gmail.com"
 
 setuptools.setup(
