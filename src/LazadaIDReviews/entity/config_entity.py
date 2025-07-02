@@ -1,11 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-"""NOTE: Delete or replace any class as you need
-and don't forget to import this class in
-'../config/configuration.py' or 
-'src/MLProject/config/configuration.py'
-"""
+# NOTE: 'frozen=True' in dataclass decorator
+# means you can't add any new functionality
 
 @dataclass(frozen=True)
 class DataIngestionSQLConfig:
@@ -17,7 +14,7 @@ class DataIngestionSQLConfig:
     items_path: Path
     category_table: str
     category_path: Path
-    
+
 @dataclass(frozen=True)
 class DataDumpConfig:
     root_dir: Path
@@ -70,3 +67,20 @@ class TrainEvaluationConfig:
     mlflow_exp_name: str
     mlflow_dataset_bucket: str
     mlflow_run_name: str
+
+@dataclass(frozen=True)
+class PredictionConfig:
+    root_dir: Path
+    mlflow_tracking_uri: str
+    mlflow_model_name: Path
+    mlflow_deploy_model_alias: Path
+    mlflow_vectorizer_model_path: Path
+
+@dataclass(frozen=True)
+class UnitTestConfig:
+    root_dir: Path
+    mlflow_tracking_uri: str
+    mlflow_model_name: str
+    mlflow_deploy_model_alias: Path
+    mlflow_input_example_path: Path
+    app_endpoint: str

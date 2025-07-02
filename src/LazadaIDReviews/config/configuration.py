@@ -1,21 +1,18 @@
 import os
 
 from pathlib import Path
+
 from LazadaIDReviews.constants import CONFIG_FILE_PATH, PARAMS_FILE_PATH
 from LazadaIDReviews.utils.common import read_yaml, create_directories
 from LazadaIDReviews.entity.config_entity import (DataIngestionSQLConfig, 
-                                            DataPreprocessingConfig,
-                                            DataDumpConfig,
-                                            TrainingConfig,
-                                            TrainEvaluationConfig)
+                                                 DataDumpConfig,
+                                                 DataPreprocessingConfig,
+                                                 TrainingConfig,
+                                                 TrainEvaluationConfig,
+                                                 PredictionConfig,
+                                                 UnitTestConfig)
 
-"""NOTE: Delete or replace any function as you need
-and don't forget to import each class config from
-'../config/configuration.py' or
-'src/MLProject/config/configuration.py'
-"""
-
-class   ConfigurationManager:
+class ConfigurationManager:
     def __init__(self, 
                  config_filepath = CONFIG_FILE_PATH,
                  params_filepath = PARAMS_FILE_PATH):
@@ -23,14 +20,14 @@ class   ConfigurationManager:
         self.config = read_yaml(config_filepath)
         self.params = read_yaml(params_filepath)
 
-        create_directories([Path(self.config.artifacts_root)])
+        create_directories([self.config.artifacts_root])
     
     def get_data_ingestion_sql_config(self) -> DataIngestionSQLConfig:
         """read data ingestion config file and store as config entity
         then apply the dataclasses
         
         Returns:
-            config: DataIngestionSQLConfig type
+            config: DataIngestionConfig type
         """
         data_ingest_config = self.config.ingest_from_sql
 
@@ -98,7 +95,7 @@ class   ConfigurationManager:
         )
 
         return config
-    
+
     def get_training_config(self) -> TrainingConfig:
         """read training config file and store as config entity
         then apply the dataclasses
@@ -125,7 +122,7 @@ class   ConfigurationManager:
         )
 
         return config
-    
+
     def get_train_eval_config(self) -> TrainEvaluationConfig:
         """read training evaluation config file and store as 
         config entity then apply the dataclasses
@@ -160,6 +157,50 @@ class   ConfigurationManager:
             mlflow_exp_name=eval_config.mlflow_exp_name,
             mlflow_dataset_bucket=os.environ["PROJECT_BUCKET"],
             mlflow_run_name=eval_config.mlflow_run_name
+        )
+
+        return config
+
+    def get_prediction_config(self) -> PredictionConfig:
+        """read training evaluation config file and store as 
+        config entity then apply the dataclasses
+        
+        Returns:
+            config: PredictionConfig type
+        """
+        predict_config = self.config.predict
+
+        create_directories([predict_config.root_dir])
+
+        config = PredictionConfig(
+            root_dir=predict_config.root_dir,
+            mlflow_tracking_uri=os.environ["MLFLOW_TRACKING_URI"],
+            mlflow_model_name=predict_config.mlflow_model_name,
+            mlflow_deploy_model_alias=os.environ["MLFLOW_DEPLOY_MODEL_ALIAS"],
+            mlflow_vectorizer_model_path=predict_config.mlflow_vectorizer_model_path,
+        )
+
+        return config
+
+    def get_unit_test_config(self) -> UnitTestConfig:
+        """read training evaluation config file and store as 
+        config entity then apply the dataclasses
+        
+        Returns:
+            config: UnitTestConfig type
+        """
+        predict_config = self.config.predict
+        unit_test_config = self.config.unit_test
+
+        create_directories([unit_test_config.root_dir])
+
+        config = UnitTestConfig(
+            root_dir=unit_test_config.root_dir,
+            mlflow_tracking_uri=os.environ["MLFLOW_TRACKING_URI"],
+            mlflow_model_name=predict_config.mlflow_model_name,
+            mlflow_deploy_model_alias=os.environ["MLFLOW_DEPLOY_MODEL_ALIAS"],
+            mlflow_input_example_path=unit_test_config.mlflow_input_example_path,
+            app_endpoint=os.environ["APP_ENDPOINT"]
         )
 
         return config
