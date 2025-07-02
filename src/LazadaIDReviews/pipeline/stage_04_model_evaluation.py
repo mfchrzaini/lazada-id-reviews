@@ -1,6 +1,6 @@
+from LazadaIDReviews import logger
 from LazadaIDReviews.config.configuration import ConfigurationManager
 from LazadaIDReviews.components.model_evaluation import TrainEvaluation
-from LazadaIDReviews import logger
 
 STAGE_NAME = "Training Evaluation"
 
@@ -9,10 +9,14 @@ class TrainEvaluationPipeline:
         pass
 
     def pipeline(self):
-        config = ConfigurationManager()
-        train_eval_config = config.get_train_eval_config()
-        train_eval = TrainEvaluation(config=train_eval_config)
-        train_eval.mlflow_log_train()
+        try:
+            config = ConfigurationManager()
+            eval_config = config.get_train_eval_config()
+            evaluation = TrainEvaluation(config=eval_config)
+            evaluation.mlflow_log_train()
+        except Exception as e:
+            logger.error(e)
+            raise e
 
 if __name__ == '__main__':
     try:
@@ -25,4 +29,4 @@ if __name__ == '__main__':
         logger.info(f">>>>>> Stage {STAGE_NAME} Completed <<<<<<")
     except Exception as e:
         logger.exception(e)
-        raise e
+        rai
