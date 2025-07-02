@@ -1,0 +1,138 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/LazadaIDReviews/pipeline/stage_01_data_ingestion.py
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 935b0b01d1155e089e4ce4ffe989b711
+      size: 1447
+    - path: src/LazadaIDReviews/pipeline/stage_01_data_ingestion.py
+      hash: md5
+      md5: 878cc8a507f2610e217959c8a0d199fe
+      size: 988
+    outs:
+    - path: artifacts/data-ingestion/category.csv
+      hash: md5
+      md5: f2d30f003184cb08be4c54ca71bc7684
+      size: 135
+    - path: artifacts/data-ingestion/items.csv
+      hash: md5
+      md5: 695004117cec3bd55e4e302355b241d0
+      size: 3006906
+    - path: artifacts/data-ingestion/reviews.csv
+      hash: md5
+      md5: 571b7ab26ba18d0a7c62255bc4a58781
+      size: 28744092
+  preprocessing:
+    cmd: python src/LazadaIDReviews/pipeline/stage_02_preprocessing.py
+    deps:
+    - path: artifacts/data-ingestion/reviews.csv
+      hash: md5
+      md5: 571b7ab26ba18d0a7c62255bc4a58781
+      size: 28744092
+    - path: config/config.yaml
+      hash: md5
+      md5: 935b0b01d1155e089e4ce4ffe989b711
+      size: 1447
+    - path: src/LazadaIDReviews/pipeline/stage_02_preprocessing.py
+      hash: md5
+      md5: 85fda816f3534755f74adaf986c2bbb9
+      size: 1432
+    params:
+      metrics/params.yaml:
+        TEST_SIZE: 0.8
+    outs:
+    - path: artifacts/data/X_test.pkl
+      hash: md5
+      md5: 21d95592e27577e78985544047befe22
+      size: 7826601
+    - path: artifacts/data/X_train.pkl
+      hash: md5
+      md5: 6df52490eb5626cf586c93b5d6c48ab1
+      size: 2066922
+    - path: artifacts/data/y_test.pkl
+      hash: md5
+      md5: 33f7ec8b96d6bb6b78aa715a81ce58a0
+      size: 2055597
+    - path: artifacts/data/y_train.pkl
+      hash: md5
+      md5: 8cc6b26f07afda22ec294bd2015dedf8
+      size: 664015
+    - path: artifacts/models/vectorizer.pkl
+      hash: md5
+      md5: 5439a0b414c5cc9b46f541830f084282
+      size: 281016
+    - path: artifacts/preprocessing/X_test_vec.pkl
+      hash: md5
+      md5: 51bf67221839b75821100319e324c821
+      size: 12165227
+    - path: artifacts/preprocessing/X_train_vec.pkl
+      hash: md5
+      md5: f6e1514ffa9ff03cb0900e345e28a93f
+      size: 14711107
+  training:
+    cmd: python src/LazadaIDReviews/pipeline/stage_03_train_model.py
+    deps:
+    - path: artifacts/data/y_train.pkl
+      hash: md5
+      md5: 8cc6b26f07afda22ec294bd2015dedf8
+      size: 664015
+    - path: artifacts/preprocessing/X_train_vec.pkl
+      hash: md5
+      md5: f6e1514ffa9ff03cb0900e345e28a93f
+      size: 14711107
+    - path: config/config.yaml
+      hash: md5
+      md5: 935b0b01d1155e089e4ce4ffe989b711
+      size: 1447
+    - path: src/LazadaIDReviews/pipeline/stage_03_train_model.py
+      hash: md5
+      md5: 026ab29ae803aa1252af9f65770d3d61
+      size: 918
+    params:
+      metrics/params.yaml:
+        MAX_ITER: 100
+        N_JOBS: -1
+        SOLVER: lbfgs
+    outs:
+    - path: artifacts/models/logistic_regression.pkl
+      hash: md5
+      md5: 5fa3673fb3cd3063a92c27f2dbe694c1
+      size: 544255
+  evaluation:
+    cmd: python src/LazadaIDReviews/pipeline/stage_04_model_evaluation.py
+    deps:
+    - path: artifacts/data/X_test.pkl
+      hash: md5
+      md5: 21d95592e27577e78985544047befe22
+      size: 7826601
+    - path: artifacts/data/X_train.pkl
+      hash: md5
+      md5: 6df52490eb5626cf586c93b5d6c48ab1
+      size: 2066922
+    - path: artifacts/data/y_train.pkl
+      hash: md5
+      md5: 8cc6b26f07afda22ec294bd2015dedf8
+      size: 664015
+    - path: artifacts/models/logistic_regression.pkl
+      hash: md5
+      md5: 5fa3673fb3cd3063a92c27f2dbe694c1
+      size: 544255
+    - path: artifacts/preprocessing/X_train_vec.pkl
+      hash: md5
+      md5: f6e1514ffa9ff03cb0900e345e28a93f
+      size: 14711107
+    - path: config/config.yaml
+      hash: md5
+      md5: 935b0b01d1155e089e4ce4ffe989b711
+      size: 1447
+    - path: src/LazadaIDReviews/pipeline/stage_04_model_evaluation.py
+      hash: md5
+      md5: caba8bf90d7a08948a15b5d35d033b23
+      size: 950
+    outs:
+    - path: metrics/scores.json
+      hash: md5
+      md5: 07185513edc482587f10ad3495ace190
+      size: 1202
