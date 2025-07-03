@@ -29,4 +29,3 @@ if __name__ == '__main__':
         logger.info(f">>>>>> Stage {STAGE_NAME} Completed <<<<<<")
     except Exception as e:
         logger.exception(e)
-        rai
